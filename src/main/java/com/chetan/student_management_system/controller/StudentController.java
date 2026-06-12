@@ -1,6 +1,7 @@
 package com.chetan.student_management_system.controller;
 
 import com.chetan.student_management_system.dto.StudentRequest;
+import com.chetan.student_management_system.dto.StudentResponse;
 import com.chetan.student_management_system.model.Student;
 import com.chetan.student_management_system.service.StudentService;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +18,14 @@ public class StudentController {
     private final StudentService studentService;
 
     @GetMapping
-    public ResponseEntity<List<Student>> getAllStudents() {
+    public ResponseEntity<List<StudentResponse>> getAllStudents() {
         return ResponseEntity.ok(studentService.fetchALlStudents());
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
-        Student student = studentService.fetchStudentById(id).orElseThrow(()-> new RuntimeException("Error"));
-        return ResponseEntity.ok(student);
+    public ResponseEntity<StudentResponse> getStudentById(@PathVariable Long id) {
+        return studentService.fetchStudentById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
     @PostMapping
     public ResponseEntity<String> addStudent(@RequestBody StudentRequest request){
