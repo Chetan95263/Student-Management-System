@@ -30,6 +30,17 @@ public class StudentService {
         updateStudentFromRequest(student , request);
         studentRepository.save(student);
     }
+    public void updateStudent(Long id, StudentRequest updatedStudent) {
+        Student student = studentRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Update Failed Error"));
+        updateStudentFromRequest(student , updatedStudent);
+        studentRepository.save(student);
+    }
+    public void deleteStudent(Long id) {
+        Student student = studentRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Deletion Failed Error"));
+        studentRepository.delete(student);
+    }
     private StudentResponse mapToStudentResponse(Student student) {
         return StudentResponse
                 .builder()
@@ -44,4 +55,5 @@ public class StudentService {
         student.setMarks(request.getMarks());
         student.setRollNumber(request.getRollNumber());
     }
+
 }
