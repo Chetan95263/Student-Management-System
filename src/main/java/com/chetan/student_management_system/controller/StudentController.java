@@ -3,6 +3,7 @@ package com.chetan.student_management_system.controller;
 import com.chetan.student_management_system.dto.StudentRequest;
 import com.chetan.student_management_system.dto.StudentResponse;
 import com.chetan.student_management_system.service.StudentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +28,13 @@ public class StudentController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
     @PostMapping
-    public ResponseEntity<String> addStudent(@RequestBody StudentRequest request){
+    public ResponseEntity<String> addStudent(@Valid @RequestBody StudentRequest request){
         studentService.addStudent(request);
         return ResponseEntity.status(HttpStatus.CREATED).body("Student Added Successfully!");
     }
     @PutMapping("/{id}")
     public ResponseEntity<String> updateStudent(@PathVariable Long id ,
-                                                @RequestBody StudentRequest updatedStudent) {
+                                                @Valid @RequestBody StudentRequest updatedStudent) {
         studentService.updateStudent(id , updatedStudent);
         return ResponseEntity.ok("Student updated Successfully!");
     }
