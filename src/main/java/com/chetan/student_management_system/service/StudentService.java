@@ -2,11 +2,13 @@ package com.chetan.student_management_system.service;
 
 import com.chetan.student_management_system.dto.StudentRequest;
 import com.chetan.student_management_system.dto.StudentResponse;
+import com.chetan.student_management_system.exception.ResourceNotFoundException;
 import com.chetan.student_management_system.model.Student;
 import com.chetan.student_management_system.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.ReadOnlyFileSystemException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,8 +17,21 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StudentService {
     private final StudentRepository studentRepository;
-    public List<StudentResponse> fetchALlStudents() {
-        return studentRepository.findAll()
+    public List<StudentResponse> fetchALlStudents(Integer minMarks , Integer maxMarks) {
+        List<Student> studentList;
+        if(minMarks != null && maxMarks != null) {
+            studentList = studentRepository.findByMarksBetween(minMarks , maxMarks);
+        } else if(minMarks != null) {
+            System.out.println(minMarks);
+            studentList = studentRepository.findByMarksGreaterThanEqual(minMarks);
+        } else if(maxMarks != null) {
+            System.out.println(maxMarks);
+            studentList = studentRepository.findByMarksLessThanEqual(maxMarks);
+        }
+        else {
+            studentList = studentRepository.findAll();
+        }
+        return studentList
                 .stream()
                 .map(this::mapToStudentResponse)
                 .collect(Collectors.toList());
@@ -32,13 +47,13 @@ public class StudentService {
     }
     public void updateStudent(Long id, StudentRequest updatedStudent) {
         Student student = studentRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Update Failed Error"));
+                () -> new ResourceNotFoundException("Student not exists with id: "+id));
         updateStudentFromRequest(student , updatedStudent);
         studentRepository.save(student);
     }
     public void deleteStudent(Long id) {
         Student student = studentRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Deletion Failed Error"));
+                () -> new ResourceNotFoundException("Student not exists with id: "+id));
         studentRepository.delete(student);
     }
     private StudentResponse mapToStudentResponse(Student student) {
@@ -48,6 +63,8 @@ public class StudentService {
                 .name(student.getName())
                 .rollNumber(student.getRollNumber())
                 .marks(student.getMarks())
+                .createdAt(student.getCreatedAt())
+                .updatedAt(student.getUpdatedAt())
                 .build();
     }
     private void updateStudentFromRequest(Student student , StudentRequest request) {
