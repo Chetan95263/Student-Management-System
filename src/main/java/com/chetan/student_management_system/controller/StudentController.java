@@ -18,8 +18,11 @@ public class StudentController {
     private final StudentService studentService;
 
     @GetMapping
-    public ResponseEntity<List<StudentResponse>> getAllStudents() {
-        return ResponseEntity.ok(studentService.fetchALlStudents());
+    public ResponseEntity<List<StudentResponse>> getAllStudents(
+            @RequestParam(required = false) Integer minMarks ,
+            @RequestParam(required = false) Integer maxMarks
+    ) {
+        return ResponseEntity.ok(studentService.fetchALlStudents(minMarks , maxMarks));
     }
     @GetMapping("/{id}")
     public ResponseEntity<StudentResponse> getStudentById(@PathVariable Long id) {
@@ -27,6 +30,7 @@ public class StudentController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
     @PostMapping
     public ResponseEntity<String> addStudent(@Valid @RequestBody StudentRequest request){
         studentService.addStudent(request);
