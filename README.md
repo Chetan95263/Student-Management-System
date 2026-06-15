@@ -9,7 +9,7 @@
 ![Jakarta Validation](https://img.shields.io/badge/Validation-Jakarta-red)
 ![Status](https://img.shields.io/badge/Status-Completed-success)
 
-An **internship-level Spring Boot REST API project** built to manage student records efficiently using modern backend development practices.
+A **Spring Boot REST API project developed as part of an internship assignment** to manage student records efficiently using modern backend development practices.
 
 This project demonstrates **CRUD operations, filtering, validation, global exception handling, API documentation, and clean layered architecture** using Spring Boot.
 
